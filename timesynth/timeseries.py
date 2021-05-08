@@ -1,10 +1,10 @@
 import numpy as np
 
-__all__ = ['TimeSeries']
+__all__ = ["SyntheticSeries"]
 
 
 class TimeSeries:
-    """A TimeSeries object is the main interface from which to sample time series.
+    """A SyntheticSeries object is the main interface from which to sample time series.
     You have to provide at least a signal generator; a noise generator is optional.
     It is recommended to set the sampling frequency.
 
@@ -16,27 +16,31 @@ class TimeSeries:
         noise object for time series
 
     """
+
     def __init__(self, signal_generator, noise_generator=None):
         self.signal_generator = signal_generator
         self.noise_generator = noise_generator
 
-
     def sample(self, time_vector):
-        """Samples from the specified TimeSeries.
-        
+        """Samples from the specified SyntheticSeries.
+
         Parameters
         ----------
         time_vector : numpy array
             Times at which to generate a sample
-            
+
         Returns
         -------
         samples, signals, errors, : tuple (array, array, array)
             Returns samples, and the signals and errors they were constructed from
         """
-        
+
         # Vectorize if possible
-        if self.signal_generator.vectorizable and not self.noise_generator is None and self.noise_generator.vectorizable:
+        if (
+            self.signal_generator.vectorizable
+            and not self.noise_generator is None
+            and self.noise_generator.vectorizable
+        ):
             signals = self.signal_generator.sample_vectorized(time_vector)
             errors = self.noise_generator.sample_vectorized(time_vector)
             samples = signals + errors
@@ -57,10 +61,14 @@ class TimeSeries:
                 t = time_vector[i]
                 # Sample error
                 if not self.noise_generator is None:
-                    errors[i] = self.noise_generator.sample_next(t, samples[:i - 1], errors[:i - 1])
+                    errors[i] = self.noise_generator.sample_next(
+                        t, samples[: i - 1], errors[: i - 1]
+                    )
 
                 # Sample signal
-                signal = self.signal_generator.sample_next(t, samples[:i - 1], errors[:i - 1])
+                signal = self.signal_generator.sample_next(
+                    t, samples[: i - 1], errors[: i - 1]
+                )
                 signals[i] = signal
 
                 # Compound signal and noise

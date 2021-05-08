@@ -1,12 +1,13 @@
 import warnings
 import numpy as np
 from .base_signal import BaseSignal
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from jitcdde import y, t, jitcdde
 
 
-__all__ = ['MackeyGlass']
+__all__ = ["MackeyGlass"]
 
 
 class MackeyGlass(BaseSignal):
@@ -40,11 +41,13 @@ class MackeyGlass(BaseSignal):
 
     """
 
-    def __init__(self, tau=17., n=10., beta=0.2, gamma=0.1, initial_condition=None, burn_in=500):
+    def __init__(
+        self, tau=17.0, n=10.0, beta=0.2, gamma=0.1, initial_condition=None, burn_in=500
+    ):
         self.vectorizable = True
 
         # Set system of equations
-        f = [- gamma * y(0) + beta * y(0, t-tau) / (1.0 + y(0, t-tau) ** n)]
+        f = [-gamma * y(0) + beta * y(0, t - tau) / (1.0 + y(0, t - tau) ** n)]
         self.dde = jitcdde(f)
 
         # Set initial condition
@@ -104,4 +107,6 @@ class MackeyGlass(BaseSignal):
         samples = []
         for t in time_vector:
             samples.append(self.dde.integrate(self.burn_in + t))
-        return np.array(samples).reshape(-1,)
+        return np.array(samples).reshape(
+            -1,
+        )

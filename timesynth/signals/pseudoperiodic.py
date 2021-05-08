@@ -1,13 +1,13 @@
 import numpy as np
 from .base_signal import BaseSignal
 
-__all__ = ['PseudoPeriodic']
+__all__ = ["PseudoPeriodic"]
 
 
 class PseudoPeriodic(BaseSignal):
-    """Signal generator for pseudoeriodic waves. 
-    
-    The wave's amplitude and frequency have some stochasticity that 
+    """Signal generator for pseudoeriodic waves.
+
+    The wave's amplitude and frequency have some stochasticity that
     can be set manually.
 
     Parameters
@@ -22,11 +22,12 @@ class PseudoPeriodic(BaseSignal):
         Frequency standard deviation
     ftype : function(default np.sin)
         Harmonic function
-        
+
     """
-    
-    def __init__(self, amplitude=1.0, frequency=100, ampSD=0.1, freqSD=0.4,
-                 ftype=np.sin):
+
+    def __init__(
+        self, amplitude=1.0, frequency=100, ampSD=0.1, freqSD=0.4, ftype=np.sin
+    ):
         self.vectorizable = True
         self.amplitude = amplitude
         self.frequency = frequency
@@ -67,7 +68,9 @@ class PseudoPeriodic(BaseSignal):
 
         """
         n_samples = len(time_vector)
-        freq_arr = np.random.normal(loc=self.frequency, scale=self.freqSD, size=n_samples)
+        freq_arr = np.random.normal(
+            loc=self.frequency, scale=self.freqSD, size=n_samples
+        )
         amp_arr = np.random.normal(loc=self.amplitude, scale=self.ampSD, size=n_samples)
         signal = np.multiply(amp_arr, self.ftype(np.multiply(freq_arr, time_vector)))
         return signal

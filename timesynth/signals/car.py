@@ -1,7 +1,7 @@
 import numpy as np
 from .base_signal import BaseSignal
 
-__all__ = ['CAR']
+__all__ = ["CAR"]
 
 
 class CAR(BaseSignal):
@@ -15,7 +15,7 @@ class CAR(BaseSignal):
         Standard deviation of the signal
     start_value : number (default 0.0)
         Starting value of the AR process
-        
+
     """
 
     def __init__(self, ar_param=1.0, sigma=0.5, start_value=0.01):
@@ -45,8 +45,11 @@ class CAR(BaseSignal):
         else:
             time_diff = time - self.previous_time
             noise = np.random.normal(loc=0.0, scale=1.0, size=1)
-            output = (np.power(self.ar_param, time_diff))*self.previous_value+\
-                self.sigma*np.sqrt(1-np.power(self.ar_param, time_diff))*noise
+            output = (
+                np.power(self.ar_param, time_diff)
+            ) * self.previous_value + self.sigma * np.sqrt(
+                1 - np.power(self.ar_param, time_diff)
+            ) * noise
         self.previous_time = time
         self.previous_value = output
         return output

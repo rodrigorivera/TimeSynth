@@ -11,7 +11,9 @@ class BaseNoise:
     def __init__(self):
         raise NotImplementedError
 
-    def sample_next(self, t, samples, errors):  # We provide t for irregularly sampled timeseries
+    def sample_next(
+        self, t, samples, errors
+    ):  # We provide t for irregularly sampled timeseries
         """Samples next point based on history of samples and errors
 
         Parameters

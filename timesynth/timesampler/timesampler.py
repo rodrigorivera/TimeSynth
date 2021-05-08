@@ -1,7 +1,7 @@
 import numpy as np
 
 
-__all__ = ['TimeSampler']
+__all__ = ["TimeSampler"]
 
 
 class TimeSampler:
@@ -16,6 +16,7 @@ class TimeSampler:
                 Time sampling of time series stops
 
     """
+
     def __init__(self, start_time=0, stop_time=10):
         self.start_time = start_time
         self.stop_time = stop_time
@@ -42,16 +43,15 @@ class TimeSampler:
         if num_points is None and resolution is None:
             raise ValueError("One of the keyword arguments must be initialized.")
         if resolution is not None:
-            time_vector = np.arange(self.start_time, self.stop_time,
-                                    resolution)
+            time_vector = np.arange(self.start_time, self.stop_time, resolution)
             return time_vector
         else:
-            time_vector = np.linspace(self.start_time, self.stop_time,
-                                      num_points)
+            time_vector = np.linspace(self.start_time, self.stop_time, num_points)
             return time_vector
 
-    def sample_irregular_time(self, num_points=None, resolution=None,
-                              keep_percentage=100):
+    def sample_irregular_time(
+        self, num_points=None, resolution=None, keep_percentage=100
+    ):
         """
         Samples regularly spaced time using the number of points or the
         resolution of the signal. Only one of the parameters is to be
@@ -75,14 +75,11 @@ class TimeSampler:
         if num_points is None and resolution is None:
             raise ValueError("One of the keyword arguments must be initialized.")
         if resolution is not None:
-            time_vector = np.arange(self.start_time, self.stop_time,
-                                    resolution)
+            time_vector = np.arange(self.start_time, self.stop_time, resolution)
         else:
-            time_vector = np.linspace(self.start_time, self.stop_time,
-                                      num_points)
-            resolution = float(self.stop_time-self.start_time)/num_points
-        time_vector = self._select_random_indices(time_vector,
-                                                  keep_percentage)
+            time_vector = np.linspace(self.start_time, self.stop_time, num_points)
+            resolution = float(self.stop_time - self.start_time) / num_points
+        time_vector = self._select_random_indices(time_vector, keep_percentage)
         return self._create_perturbations(time_vector, resolution)
 
     def _create_perturbations(self, time_vector, resolution):
@@ -103,8 +100,9 @@ class TimeSampler:
             Irregularly sampled timestamps with perturbations
 
         """
-        sample_perturbations = np.random.normal(loc=0.0, scale=resolution,
-                                                size=len(time_vector))
+        sample_perturbations = np.random.normal(
+            loc=0.0, scale=resolution, size=len(time_vector)
+        )
         time_vector = time_vector + sample_perturbations
         return np.sort(time_vector)
 
@@ -127,7 +125,8 @@ class TimeSampler:
 
         """
         num_points = len(time_vector)
-        num_select_points = int(keep_percentage*num_points/100)
-        index = np.sort(np.random.choice(num_points, size=num_select_points,
-                        replace=False))
+        num_select_points = int(keep_percentage * num_points / 100)
+        index = np.sort(
+            np.random.choice(num_points, size=num_select_points, replace=False)
+        )
         return time_vector[index]

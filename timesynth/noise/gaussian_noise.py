@@ -2,7 +2,7 @@ import numpy as np
 from .base_noise import BaseNoise
 
 
-__all__ = ['GaussianNoise']
+__all__ = ["GaussianNoise"]
 
 
 class GaussianNoise(BaseNoise):
@@ -18,7 +18,7 @@ class GaussianNoise(BaseNoise):
 
     """
 
-    def __init__(self, mean=0, std=1.):
+    def __init__(self, mean=0, std=1.0):
         self.vectorizable = True
         self.mean = mean
         self.std = std

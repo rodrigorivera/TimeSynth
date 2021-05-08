@@ -2,7 +2,7 @@ import numpy as np
 from .base_signal import BaseSignal
 
 
-__all__ = ['Sinusoidal']
+__all__ = ["Sinusoidal"]
 
 
 class Sinusoidal(BaseSignal):
@@ -39,7 +39,7 @@ class Sinusoidal(BaseSignal):
             sampled signal for time t
 
         """
-        return self.amplitude * self.ftype(2*np.pi*self.frequency*time)
+        return self.amplitude * self.ftype(2 * np.pi * self.frequency * time)
 
     def sample_vectorized(self, time_vector):
         """Sample entire series based off of time vector
@@ -56,8 +56,9 @@ class Sinusoidal(BaseSignal):
 
         """
         if self.vectorizable is True:
-            signal = self.amplitude * self.ftype(2*np.pi*self.frequency *
-                                                 time_vector)
+            signal = self.amplitude * self.ftype(
+                2 * np.pi * self.frequency * time_vector
+            )
             return signal
         else:
             raise ValueError("Signal type not vectorizable")
