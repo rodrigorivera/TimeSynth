@@ -1,4 +1,5 @@
 __all__ = []
+from torch import Tensor
 
 
 class BaseSignal:
@@ -31,7 +32,7 @@ class BaseSignal:
         """
         raise NotImplementedError
 
-    def sample_vectorized(self, time_vector):
+    def sample_vectorized(self, time_vector)->Tensor:
         """Samples for all time points in input
 
         Parameters

@@ -1,37 +1,41 @@
-import numpy as np
+import torch
+from torch import Tensor
+from noise.base_noise import BaseNoise
+from .signals.base_signal import BaseSignal
+from typing import Tuple
 
 __all__ = ["SyntheticSeries"]
 
 
-class TimeSeries:
-    """A SyntheticSeries object is the main interface from which to sample time series.
-    You have to provide at least a signal generator; a noise generator is optional.
+class SyntheticSeries:
+    """A SyntheticSeries object is the main interface from which to sample synthetic time series.
+    Provide at least a signal generator; a noise generator is optional.
     It is recommended to set the sampling frequency.
 
     Parameters
     ----------
     signal_generator : Signal object
-        signal object for time series
+        signal object for synthetic time series
     noise_generator : Noise object
-        noise object for time series
+        noise object for synthetic time series
 
     """
 
-    def __init__(self, signal_generator, noise_generator=None):
+    def __init__(self, signal_generator:BaseSignal, noise_generator:BaseNoise=None):
         self.signal_generator = signal_generator
         self.noise_generator = noise_generator
 
-    def sample(self, time_vector):
+    def sample(self, time_vector:Tensor)->Tuple[Tensor, Tensor, Tensor]:
         """Samples from the specified SyntheticSeries.
 
         Parameters
         ----------
-        time_vector : numpy array
+        time_vector : tensor
             Times at which to generate a sample
 
         Returns
         -------
-        samples, signals, errors, : tuple (array, array, array)
+        samples, signals, errors, : tuple (tensor, tensor, tensor)
             Returns samples, and the signals and errors they were constructed from
         """
 
@@ -50,10 +54,10 @@ class TimeSeries:
             samples = signals
         else:
             n_samples = len(time_vector)
-            samples = np.zeros(n_samples)  # Signal and errors combined
-            signals = np.zeros(n_samples)  # Signal samples
-            errors = np.zeros(n_samples)  # Handle errors seprately
-            times = np.arange(n_samples)
+            samples = torch.zeros(n_samples)  # Signal and errors combined
+            signals = torch.zeros(n_samples)  # Signal samples
+            errors = torch.zeros(n_samples)  # Handle errors seprately
+            times = torch.arange(n_samples)
 
             # Sample iteratively, while providing access to all previously sampled steps
             for i in range(n_samples):

@@ -46,18 +46,19 @@ python setup.py install
 $ python
 ```
 The code snippet demonstrates creating a irregular sinusoidal signal with white noise.
+
 ```python
->>> import timesynth as ts
->>> # Initializing TimeSampler
->>> time_sampler = ts.TimeSampler(stop_time=20)
->>> # Sampling irregular time samples
->>> irregular_time_samples = time_sampler.sample_irregular_time(num_points=500, keep_percentage=50)
->>> # Initializing Sinusoidal signal
->>> sinusoid = ts.signals.Sinusoidal(frequency=0.25)
->>> # Initializing Gaussian noise
->>> white_noise = ts.noise.GaussianNoise(std=0.3)
->>> # Initializing TimeSeries class with the signal and noise objects
->>> timeseries = ts.TimeSeries(sinusoid, noise_generator=white_noise)
->>> # Sampling using the irregular time samples
->>> samples, signals, errors = timeseries.sample(irregular_time_samples)
+>> > import timesynth as ts
+>> >  # Initializing TimeSampler
+>> > time_sampler = ts.TimeSampler(stop_time=20)
+>> >  # Sampling irregular time samples
+>> > irregular_time_samples = time_sampler.sample_irregular_time(num_points=500, keep_percentage=50)
+>> >  # Initializing Sinusoidal signal
+>> > sinusoid = ts.signals.Sinusoidal(frequency=0.25)
+>> >  # Initializing Gaussian noise
+>> > white_noise = ts.noise.GaussianNoise(std=0.3)
+>> >  # Initializing TimeSeries class with the signal and noise objects
+>> > timeseries = ts.SyntheticSeries(sinusoid, noise_generator=white_noise)
+>> >  # Sampling using the irregular time samples
+>> > samples, signals, errors = timeseries.sample(irregular_time_samples)
 ```

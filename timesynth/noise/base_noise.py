@@ -1,4 +1,7 @@
 __all__ = []
+from typing import List
+import torch
+from torch import Tensor
 
 
 class BaseNoise:
@@ -12,8 +15,8 @@ class BaseNoise:
         raise NotImplementedError
 
     def sample_next(
-        self, t, samples, errors
-    ):  # We provide t for irregularly sampled timeseries
+        self, t:int, samples:torch.tensor, errors:torch.tensor
+    )->Tensor:  # We provide t for irregularly sampled synethtic time series
         """Samples next point based on history of samples and errors
 
         Parameters

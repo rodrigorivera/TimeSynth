@@ -1,4 +1,5 @@
-import numpy as np
+import torch
+from torch import Tensor
 from .base_noise import BaseNoise
 
 
@@ -22,21 +23,21 @@ class RedNoise(BaseNoise):
 
     """
 
-    def __init__(self, mean=0, std=1.0, tau=0.2, start_value=0):
+    def __init__(self, mean:float=0, std:float=1.0, tau:float=0.2, start_value:float=0):
         self.vectorizable = False
         self.mean = mean
         self.std = std
-        self.start_value = 0
+        self.start_value = torch.tensor(start_value)
         self.tau = tau
-        self.previous_value = None
+        self.previous_value: Tensor = None
         self.previous_time = None
 
-    def sample_next(self, t, samples, errors):
+    def sample_next(self, t:int, samples:torch.tensor, errors:torch.tensor)->Tensor:
         if self.previous_time is None:
             red_noise = self.start_value
         else:
             time_diff = t - self.previous_time
-            wnoise = np.random.normal(loc=self.mean, scale=self.std, size=1)
+            wnoise = torch.normal(mean=self.mean, std=self.std, size=(1,1))
             red_noise = (self.tau / (self.tau + time_diff)) * (
                 time_diff * wnoise + self.previous_value
             )

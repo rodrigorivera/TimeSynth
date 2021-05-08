@@ -1,4 +1,5 @@
-import numpy as np
+import torch
+from torch import Tensor
 from .base_noise import BaseNoise
 
 
@@ -23,9 +24,9 @@ class GaussianNoise(BaseNoise):
         self.mean = mean
         self.std = std
 
-    def sample_next(self, t, samples, errors):
-        return np.random.normal(loc=self.mean, scale=self.std, size=1)
+    def sample_next(self, t:int, samples:torch.tensor, errors:torch.tensor)-> Tensor:
+        return torch.normal(mean=self.mean, std=self.std, size=(1,1))
 
-    def sample_vectorized(self, time_vector):
+    def sample_vectorized(self, time_vector:torch.tensor)-> Tensor:
         n_samples = len(time_vector)
-        return np.random.normal(loc=self.mean, scale=self.std, size=n_samples)
+        return torch.normal(mean=self.mean, std=self.std, size=(n_samples,1))

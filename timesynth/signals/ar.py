@@ -1,4 +1,6 @@
-import numpy as np
+import torch
+from torch import Tensor
+from typing import List
 from .base_signal import BaseSignal
 
 __all__ = ["AutoRegressive"]
@@ -22,7 +24,7 @@ class AutoRegressive(BaseSignal):
 
     """
 
-    def __init__(self, ar_param=[None], sigma=0.5, start_value=[None]):
+    def __init__(self, ar_param:List=[None], sigma:float=0.5, start_value:List=[None]):
         self.vectorizable = False
         ar_param.reverse()
         self.ar_param = ar_param
@@ -36,7 +38,7 @@ class AutoRegressive(BaseSignal):
                 self.start_value = start_value
         self.previous_value = self.start_value
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples, errors)->Tensor:
         """Sample a single time point
 
         Parameters
@@ -52,7 +54,7 @@ class AutoRegressive(BaseSignal):
         ar_value = [
             self.previous_value[i] * self.ar_param[i] for i in range(len(self.ar_param))
         ]
-        noise = np.random.normal(loc=0.0, scale=self.sigma, size=1)
-        ar_value = np.sum(ar_value) + noise
+        noise = torch.normal(mean=0.0, std=self.sigma, size=(1,1))
+        ar_value = torch.sum(torch.tensor(ar_value)) + noise
         self.previous_value = self.previous_value[1:] + [ar_value]
         return ar_value

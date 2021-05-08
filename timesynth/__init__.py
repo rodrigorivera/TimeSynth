@@ -1,4 +1,4 @@
-from .timeseries import TimeSeries
+from .syntheticseries import SyntheticSeries
 from . import signals
 from . import noise
 from .timesampler import TimeSampler
