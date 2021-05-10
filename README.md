@@ -52,7 +52,7 @@ The code snippet demonstrates creating a irregular sinusoidal signal with white 
 >> >  # Initializing TimeSampler
 >> > time_sampler = ts.TimeSampler(stop_time=20)
 >> >  # Sampling irregular time samples
->> > irregular_time_samples = time_sampler.sample_irregular_time(num_points=500, keep_percentage=50)
+>> > irregular_time_samples = time_sampler._sample_irregular_time(num_points=500, keep_percentage=50)
 >> >  # Initializing Sinusoidal signal
 >> > sinusoid = ts.signals.Sinusoidal(frequency=0.25)
 >> >  # Initializing Gaussian noise

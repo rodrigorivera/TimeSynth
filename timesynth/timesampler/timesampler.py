@@ -1,5 +1,5 @@
-import numpy as np
-
+import torch
+from torch import Tensor
 
 __all__ = ["TimeSampler"]
 
@@ -21,7 +21,31 @@ class TimeSampler:
         self.start_time = start_time
         self.stop_time = stop_time
 
-    def sample_regular_time(self, num_points=None, resolution=None):
+    def sample_time(self, num_points:int=None, resolution:float=None,
+                    keep_percentage:int=100, how:str='regular')->Tensor:
+        """
+
+        Parameters
+        ----------
+        num_points
+        resolution
+        keep_percentage
+        how
+
+        Returns
+        -------
+
+        """
+        dispatch = {
+            'regular': self._sample_regular_time,
+            'irregular': self._sample_irregular_time
+        }
+
+        return dispatch.get(how)(num_points, resolution, keep_percentage)
+
+
+    def _sample_regular_time(self, num_points:int=None,
+                             resolution:int=None, keep_percentage:int=100)->Tensor:
         """
         Samples regularly spaced time using the number of points or the
         resolution of the signal. Only one of the parameters is to be
@@ -43,15 +67,15 @@ class TimeSampler:
         if num_points is None and resolution is None:
             raise ValueError("One of the keyword arguments must be initialized.")
         if resolution is not None:
-            time_vector = np.arange(self.start_time, self.stop_time, resolution)
+            time_vector = torch.arange(self.start_time, self.stop_time, resolution)
             return time_vector
         else:
-            time_vector = np.linspace(self.start_time, self.stop_time, num_points)
+            time_vector = torch.linspace(self.start_time, self.stop_time, num_points)
             return time_vector
 
-    def sample_irregular_time(
-        self, num_points=None, resolution=None, keep_percentage=100
-    ):
+    def _sample_irregular_time(
+        self, num_points:int=None,
+                             resolution:int=None, keep_percentage:int=100)->Tensor:
         """
         Samples regularly spaced time using the number of points or the
         resolution of the signal. Only one of the parameters is to be
@@ -75,14 +99,14 @@ class TimeSampler:
         if num_points is None and resolution is None:
             raise ValueError("One of the keyword arguments must be initialized.")
         if resolution is not None:
-            time_vector = np.arange(self.start_time, self.stop_time, resolution)
+            time_vector = torch.arange(self.start_time, self.stop_time, resolution)
         else:
-            time_vector = np.linspace(self.start_time, self.stop_time, num_points)
+            time_vector = torch.linspace(self.start_time, self.stop_time, num_points)
             resolution = float(self.stop_time - self.start_time) / num_points
         time_vector = self._select_random_indices(time_vector, keep_percentage)
         return self._create_perturbations(time_vector, resolution)
 
-    def _create_perturbations(self, time_vector, resolution):
+    def _create_perturbations(self, time_vector:Tensor, resolution:float)->Tensor:
         """
         Internal functions to create perturbations in timestamps
 
@@ -100,13 +124,13 @@ class TimeSampler:
             Irregularly sampled timestamps with perturbations
 
         """
-        sample_perturbations = np.random.normal(
-            loc=0.0, scale=resolution, size=len(time_vector)
+        sample_perturbations = torch.normal(
+            mean=0.0, std=resolution, size=(len(time_vector),1)
         )
         time_vector = time_vector + sample_perturbations
-        return np.sort(time_vector)
+        return torch.sort(time_vector)
 
-    def _select_random_indices(self, time_vector, keep_percentage):
+    def _select_random_indices(self, time_vector:Tensor, keep_percentage:float)-> Tensor:
         """
         Internal functions to randomly select timestamps
 
