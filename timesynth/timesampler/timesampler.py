@@ -1,5 +1,6 @@
 import torch
 from torch import Tensor
+import random
 
 __all__ = ["TimeSampler"]
 
@@ -125,12 +126,13 @@ class TimeSampler:
 
         """
         sample_perturbations = torch.normal(
-            mean=0.0, std=resolution, size=(len(time_vector),1)
+            mean=0.0, std=resolution, size=(len(time_vector),)
         )
         time_vector = time_vector + sample_perturbations
-        return torch.sort(time_vector)
+        return torch.sort(time_vector)[0]
 
-    def _select_random_indices(self, time_vector:Tensor, keep_percentage:float)-> Tensor:
+    def _select_random_indices(self, time_vector:Tensor,
+                               keep_percentage:float)-> Tensor:
         """
         Internal functions to randomly select timestamps
 
@@ -150,7 +152,9 @@ class TimeSampler:
         """
         num_points = len(time_vector)
         num_select_points = int(keep_percentage * num_points / 100)
-        index = np.sort(
-            np.random.choice(num_points, size=num_select_points, replace=False)
-        )
+
+        index = torch.tensor(random.sample(range(time_vector.size()[0]), num_select_points))
+        index = torch.tensor(index)
+
+
         return time_vector[index]

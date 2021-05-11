@@ -19,11 +19,11 @@ class Sinusoidal(BaseSignal):
 
     """
 
-    def __init__(self, amplitude=1.0, frequency=1.0, ftype=np.sin):
-        self.vectorizable = True
-        self.amplitude = amplitude
+    def __init__(self, amplitude:float=1.0, frequency:float=1.0, ftype=np.sin):
+        self.vectorizable:bool= True
+        self.amplitude:float = amplitude
         self.ftype = ftype
-        self.frequency = frequency
+        self.frequency:float = frequency
 
     def sample_next(self, time, samples, errors):
         """Sample a single time point
