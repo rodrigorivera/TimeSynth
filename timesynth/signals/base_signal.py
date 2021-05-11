@@ -12,7 +12,7 @@ class BaseSignal:
     def __init__(self):
         raise NotImplementedError
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Samples next point based on history of samples and errors
 
         Parameters
@@ -32,7 +32,7 @@ class BaseSignal:
         """
         raise NotImplementedError
 
-    def sample_vectorized(self, time_vector)->Tensor:
+    def sample_vectorized(self, time_vector:Tensor)->Tensor:
         """Samples for all time points in input
 
         Parameters

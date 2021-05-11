@@ -1,5 +1,7 @@
 import warnings
+import torch
 import numpy as np
+from torch import Tensor
 from .base_signal import BaseSignal
 
 with warnings.catch_warnings():
@@ -42,7 +44,12 @@ class MackeyGlass(BaseSignal):
     """
 
     def __init__(
-        self, tau=17.0, n=10.0, beta=0.2, gamma=0.1, initial_condition=None, burn_in=500
+        self, tau:float=17.0,
+            n:float=10.0,
+            beta:float=0.2,
+            gamma:float=0.1,
+            initial_condition:Tensor=None,
+            burn_in:float=500.0
     ):
         self.vectorizable = True
 
@@ -70,7 +77,7 @@ class MackeyGlass(BaseSignal):
         self.burn_in = burn_in
         self.dde.integrate_blindly(self.burn_in)
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Samples next point based on history of samples and errors
 
         Parameters
@@ -90,7 +97,7 @@ class MackeyGlass(BaseSignal):
         """
         return self.dde.integrate(self.burn_in + time)
 
-    def sample_vectorized(self, time_vector):
+    def sample_vectorized(self, time_vector:Tensor)->Tensor:
         """Samples for all time points in input
 
         Parameters
@@ -107,6 +114,4 @@ class MackeyGlass(BaseSignal):
         samples = []
         for t in time_vector:
             samples.append(self.dde.integrate(self.burn_in + t))
-        return np.array(samples).reshape(
-            -1,
-        )
+        return torch.tensor(samples).reshape(-1,)

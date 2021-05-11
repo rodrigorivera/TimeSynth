@@ -1,5 +1,7 @@
 import numpy as np
 import scipy.special
+from torch import Tensor
+import torch
 from .base_signal import BaseSignal
 
 __all__ = ["GaussianProcess"]
@@ -40,15 +42,15 @@ class GaussianProcess(BaseSignal):
     def __init__(
         self,
         kernel="SE",
-        lengthscale=1.0,
-        mean=0.0,
-        variance=1.0,
-        c=1.0,
-        gamma=1.0,
-        alpha=1.0,
-        offset=0.0,
-        nu=5.0 / 2,
-        p=1.0,
+        lengthscale:float=1.0,
+        mean:float=0.0,
+        variance:float=1.0,
+        c:float=1.0,
+        gamma:float=1.0,
+        alpha:float=1.0,
+        offset:float=0.0,
+        nu:float=5.0 / 2,
+        p:float=1.0,
     ):
         self.vectorizable = True
         self.lengthscale = lengthscale
@@ -76,7 +78,7 @@ class GaussianProcess(BaseSignal):
             * np.exp(-2 * np.square(np.sin(np.pi * np.abs(x1 - x2) / p))),
         }[kernel]
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Sample a single time point
 
         Parameters
@@ -92,7 +94,7 @@ class GaussianProcess(BaseSignal):
         """
         raise NotImplementedError
 
-    def sample_vectorized(self, time_vector):
+    def sample_vectorized(self, time_vector:Tensor)->Tensor:
         """Sample entire series based off of time vector
 
         Parameters
@@ -115,7 +117,10 @@ class GaussianProcess(BaseSignal):
         covariance_matrix[
             np.diag_indices_from(covariance_matrix)
         ] += 1e-12  # Add small value to diagonal for numerical stability
-        return np.random.multivariate_normal(
+
+        time_vector = torch.Tensor(np.random.multivariate_normal(
             mean=np.full(shape=(time_vector.shape[0],), fill_value=self.mean),
             cov=covariance_matrix,
-        )
+        ))
+
+        return time_vector

@@ -1,11 +1,12 @@
-import numpy as np
+import torch
+from torch import Tensor
 from .base_signal import BaseSignal
 
 __all__ = ["CAR"]
 
 
 class CAR(BaseSignal):
-    """Signal generatpr for continuously autoregressive (CAR) signals.
+    """Signal generator for continuously autoregressive (CAR) signals.
 
     Parameters
     ----------
@@ -18,7 +19,7 @@ class CAR(BaseSignal):
 
     """
 
-    def __init__(self, ar_param=1.0, sigma=0.5, start_value=0.01):
+    def __init__(self, ar_param:float=1.0, sigma:float=0.5, start_value:float=0.01):
         self.vectorizable = False
         self.ar_param = ar_param
         self.sigma = sigma
@@ -26,7 +27,7 @@ class CAR(BaseSignal):
         self.previous_value = None
         self.previous_time = None
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Sample a single time point
 
         Parameters
@@ -44,11 +45,16 @@ class CAR(BaseSignal):
             output = self.start_value
         else:
             time_diff = time - self.previous_time
-            noise = np.random.normal(loc=0.0, scale=1.0, size=1)
+            noise = torch.normal(mean=0.0, std=1.0, size=(1,))
+            if isinstance(self.ar_param, float):
+                self.ar_param = torch.tensor([self.ar_param])
+            if isinstance(self.time_diff, float):
+                time_diff = torch.tensor([self.time_diff])
+
             output = (
-                np.power(self.ar_param, time_diff)
-            ) * self.previous_value + self.sigma * np.sqrt(
-                1 - np.power(self.ar_param, time_diff)
+                torch.pow(self.ar_param, time_diff)
+            ) * self.previous_value + self.sigma * torch.sqrt(
+                1 - torch.pow(self.ar_param, time_diff)
             ) * noise
         self.previous_time = time
         self.previous_value = output

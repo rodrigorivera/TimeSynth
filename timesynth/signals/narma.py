@@ -1,4 +1,8 @@
+
+from torch import Tensor
 import numpy as np
+import torch
+from typing import Union
 from .base_signal import BaseSignal
 
 
@@ -40,21 +44,21 @@ class NARMA(BaseSignal):
     def __init__(
         self,
         order=10,
-        coefficients=[0.3, 0.05, 1.5, 0.1],
-        initial_condition=None,
-        error_initial_condition=None,
-        seed=42,
+        coefficients:Tensor=torch.tensor([0.3, 0.05, 1.5, 0.1]),
+        initial_condition:Union[Tensor,None]=None,
+        error_initial_condition:Union[Tensor,None]=None,
+        seed:int=42
     ):
         self.vectorizable = True
         self.order = order
-        self.coefficients = np.array(coefficients)
-        self.random = np.random.RandomState(seed)
+        self.coefficients = coefficients
+        self.random = torch.manual_seed(seed)
 
         # Store initial conditions
         if initial_condition is None:
-            self.initial_condition = np.zeros(order)
+            self.initial_condition = torch.zeros(order)
         else:
-            self.initial_condition = np.array(initial_condition)
+            self.initial_condition = initial_condition
 
         # You may provide an error initial condition
         if error_initial_condition is None:

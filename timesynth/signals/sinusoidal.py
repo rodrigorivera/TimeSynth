@@ -19,7 +19,10 @@ class Sinusoidal(BaseSignal):
 
     """
 
-    def __init__(self, amplitude:float=1.0, frequency:float=1.0, ftype=np.sin):
+    def __init__(self,
+                 amplitude:float=1.0,
+                 frequency:float=1.0,
+                 ftype=np.sin):
         self.vectorizable:bool= True
         self.amplitude:float = amplitude
         self.ftype = ftype
