@@ -1,5 +1,8 @@
 import numpy as np
 from .base_signal import BaseSignal
+from torch import Tensor
+from typing import Callable
+import torch
 
 
 __all__ = ["Sinusoidal"]
@@ -25,10 +28,10 @@ class Sinusoidal(BaseSignal):
                  ftype=np.sin):
         self.vectorizable:bool= True
         self.amplitude:float = amplitude
-        self.ftype = ftype
+        self.ftype:Callable[[np.array],np.array]= ftype
         self.frequency:float = frequency
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Sample a single time point
 
         Parameters
@@ -44,7 +47,7 @@ class Sinusoidal(BaseSignal):
         """
         return self.amplitude * self.ftype(2 * np.pi * self.frequency * time)
 
-    def sample_vectorized(self, time_vector):
+    def sample_vectorized(self, times:Tensor)->Tensor:
         """Sample entire series based off of time vector
 
         Parameters
@@ -59,9 +62,9 @@ class Sinusoidal(BaseSignal):
 
         """
         if self.vectorizable is True:
-            signal = self.amplitude * self.ftype(
-                2 * np.pi * self.frequency * time_vector
-            )
+            signal = torch.tensor(self.amplitude * self.ftype(
+                2 * np.pi * self.frequency * times
+            ))
             return signal
         else:
             raise ValueError("Signal type not vectorizable")

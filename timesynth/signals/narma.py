@@ -2,7 +2,7 @@
 from torch import Tensor
 import numpy as np
 import torch
-from typing import Union
+from typing import Optional
 from .base_signal import BaseSignal
 
 
@@ -45,14 +45,14 @@ class NARMA(BaseSignal):
         self,
         order=10,
         coefficients:Tensor=torch.tensor([0.3, 0.05, 1.5, 0.1]),
-        initial_condition:Union[Tensor,None]=None,
-        error_initial_condition:Union[Tensor,None]=None,
+        initial_condition:Optional[Tensor]=None,
+        error_initial_condition:Optional[Tensor]=None,
         seed:int=42
     ):
         self.vectorizable = True
         self.order = order
         self.coefficients = coefficients
-        self.random = torch.manual_seed(seed)
+        self.random = np.random.seed(seed)
 
         # Store initial conditions
         if initial_condition is None:
@@ -66,7 +66,7 @@ class NARMA(BaseSignal):
         else:
             self.error_initial_condition = error_initial_condition
 
-    def _next_value(self, values, rands, index):
+    def _next_value(self, values:Tensor, rands:Tensor, index:int)->float:
         """Internal short-hand method to calculate next value."""
         # Short-hand parameters
         n = self.order
@@ -85,11 +85,11 @@ class NARMA(BaseSignal):
             + a[3]
         )
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """This method is not available for NARMA, due to internal error sampling."""
         raise NotImplementedError("NARMA can only be sampled vectorized.")
 
-    def sample_vectorized(self, times):
+    def sample_vectorized(self, times:Tensor)->Tensor:
         """Samples for all time points in input
 
         Internalizes Uniform(0, 0.5) random distortion for u.
@@ -111,10 +111,10 @@ class NARMA(BaseSignal):
         # Get relevant arrays
         inits = self.initial_condition
         rand_inits = self.error_initial_condition
-        rands = np.concatenate(
+        rands = torch.tensor(np.concatenate(
             (rand_inits, self.random.uniform(0, 0.5, size=times.shape[0]))
-        )
-        values = np.concatenate((inits, np.zeros(times.shape[0])))
+        ))
+        values = torch.cat((inits, torch.zeros(times.shape[0])))
 
         # Sample step-wise
         end = values.shape[0]
@@ -126,4 +126,4 @@ class NARMA(BaseSignal):
 
         # Return trimmed values (exclude initial condition)
         samples = values[start:]
-        return samples
+        return torch.Tensor(samples)

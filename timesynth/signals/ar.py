@@ -43,7 +43,7 @@ class AutoRegressive(BaseSignal):
                 self.start_value = start_value
         self.previous_value = self.start_value
 
-    def sample_next(self, time:int, samples, errors)->float:
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Sample a single time point
 
         Parameters

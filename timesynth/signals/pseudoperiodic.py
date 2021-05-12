@@ -1,4 +1,7 @@
+import torch
+from torch import Tensor
 import numpy as np
+from typing import Callable
 from .base_signal import BaseSignal
 
 __all__ = ["PseudoPeriodic"]
@@ -26,7 +29,11 @@ class PseudoPeriodic(BaseSignal):
     """
 
     def __init__(
-        self, amplitude=1.0, frequency=100, ampSD=0.1, freqSD=0.4, ftype=np.sin
+        self, amplitude:float=1.0,
+            frequency:int=100,
+            ampSD:float=0.1,
+            freqSD:float=0.4,
+            ftype:Callable[[np.array],np.array]=np.sin
     ):
         self.vectorizable = True
         self.amplitude = amplitude
@@ -35,7 +42,7 @@ class PseudoPeriodic(BaseSignal):
         self.ampSD = ampSD
         self.ftype = ftype
 
-    def sample_next(self, time, samples, errors):
+    def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Sample a single time point
 
         Parameters
@@ -53,12 +60,12 @@ class PseudoPeriodic(BaseSignal):
         amplitude_val = np.random.normal(loc=self.amplitude, scale=self.ampSD, size=1)
         return float(amplitude_val * np.sin(freq_val * time))
 
-    def sample_vectorized(self, time_vector):
+    def sample_vectorized(self, times:Tensor)->Tensor:
         """Sample entire series based off of time vector
 
         Parameters
         ----------
-        time_vector : array-like
+        times : array-like
             Timestamps for signal generation
 
         Returns
@@ -67,10 +74,10 @@ class PseudoPeriodic(BaseSignal):
             sampled signal for time vector
 
         """
-        n_samples = len(time_vector)
+        n_samples = len(times)
         freq_arr = np.random.normal(
             loc=self.frequency, scale=self.freqSD, size=n_samples
         )
         amp_arr = np.random.normal(loc=self.amplitude, scale=self.ampSD, size=n_samples)
-        signal = np.multiply(amp_arr, self.ftype(np.multiply(freq_arr, time_vector)))
+        signal = torch.tensor(np.multiply(amp_arr, self.ftype(np.multiply(freq_arr, times))))
         return signal
