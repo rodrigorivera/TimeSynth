@@ -89,14 +89,14 @@ class NARMA(BaseSignal):
         """This method is not available for NARMA, due to internal error sampling."""
         raise NotImplementedError("NARMA can only be sampled vectorized.")
 
-    def sample_vectorized(self, times:Tensor)->Tensor:
+    def sample_vectorized(self, time_vector:Tensor)->Tensor:
         """Samples for all time points in input
 
         Internalizes Uniform(0, 0.5) random distortion for u.
 
         Parameters
         ----------
-        times: array like
+        time_vector: array like
             all time stamps to be sampled
 
         Returns
@@ -112,9 +112,9 @@ class NARMA(BaseSignal):
         inits = self.initial_condition
         rand_inits = self.error_initial_condition
         rands = torch.tensor(np.concatenate(
-            (rand_inits, self.random.uniform(0, 0.5, size=times.shape[0]))
+            (rand_inits, self.random.uniform(0, 0.5, size=time_vector.shape[0]))
         ))
-        values = torch.cat((inits, torch.zeros(times.shape[0])))
+        values = torch.cat((inits, torch.zeros(time_vector.shape[0])))
 
         # Sample step-wise
         end = values.shape[0]

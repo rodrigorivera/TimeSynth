@@ -47,7 +47,7 @@ class Sinusoidal(BaseSignal):
         """
         return self.amplitude * self.ftype(2 * np.pi * self.frequency * time)
 
-    def sample_vectorized(self, times:Tensor)->Tensor:
+    def sample_vectorized(self, time_vector:Tensor)->Tensor:
         """Sample entire series based off of time vector
 
         Parameters
@@ -63,7 +63,7 @@ class Sinusoidal(BaseSignal):
         """
         if self.vectorizable is True:
             signal = torch.tensor(self.amplitude * self.ftype(
-                2 * np.pi * self.frequency * times
+                2 * np.pi * self.frequency * time_vector
             ))
             return signal
         else:
