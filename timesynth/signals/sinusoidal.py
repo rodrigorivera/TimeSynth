@@ -26,7 +26,7 @@ class Sinusoidal(BaseSignal):
                  amplitude:float=1.0,
                  frequency:float=1.0,
                  ftype=np.sin):
-        self.vectorizable:bool= True
+        super().__init__(vectorizable=True)
         self.amplitude:float = amplitude
         self.ftype:Callable[[np.array],np.array]= ftype
         self.frequency:float = frequency

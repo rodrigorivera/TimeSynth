@@ -9,8 +9,8 @@ class BaseSignal:
 
     """
 
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, vectorizable:bool=False):
+        self.vectorizable = vectorizable
 
     def sample_next(self, time:int, samples:Tensor, errors:Tensor)->float:
         """Samples next point based on history of samples and errors
